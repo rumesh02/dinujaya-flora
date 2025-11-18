@@ -13,6 +13,8 @@ import CollectionPage from './pages/CollectionPage';
 import CollectionDetailPage from './pages/CollectionDetailPage';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import PaymentSuccess from './pages/PaymentSuccess';
 
 // Admin pages
 import AdminLayout from './components/admin/AdminLayout';
@@ -41,6 +43,8 @@ function App() {
             <Route path="/collection/:collectionName" element={<CollectionDetailPage />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={
