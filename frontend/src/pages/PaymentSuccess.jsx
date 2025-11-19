@@ -18,20 +18,29 @@ const PaymentSuccess = () => {
 
           {/* Success Message */}
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            Order Placed Successfully!
+            Payment Successful!
           </h1>
           <p className="text-lg text-gray-600 mb-8">
-            Thank you for your order. Your flowers will be delivered soon!
+            Thank you for your order. Your payment has been processed successfully and your flowers will be delivered soon!
           </p>
 
           {/* Order Details */}
           <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-lg p-6 mb-8">
-            <p className="text-gray-700 mb-2">
-              We've sent a confirmation email with your order details.
-            </p>
-            <p className="text-gray-700">
-              You can track your order status from your profile.
-            </p>
+            <h3 className="font-semibold text-gray-800 mb-3">What's Next?</h3>
+            <ul className="space-y-2 text-sm text-gray-700 text-left max-w-md mx-auto">
+              <li className="flex items-start">
+                <span className="mr-2">✓</span>
+                <span>You will receive an order confirmation email shortly</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">✓</span>
+                <span>Your order is being processed and will be shipped soon</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">✓</span>
+                <span>You can track your order status from your profile</span>
+              </li>
+            </ul>
           </div>
 
           {/* Action Buttons */}
@@ -44,11 +53,11 @@ const PaymentSuccess = () => {
               Back to Home
             </button>
             <button
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/flowers')}
               className="flex items-center justify-center gap-2 bg-white text-pink-600 border-2 border-pink-500 px-8 py-3 rounded-lg font-semibold hover:bg-pink-50 transition-all"
             >
               <Package className="w-5 h-5" />
-              View Orders
+              Continue Shopping
             </button>
           </div>
 
