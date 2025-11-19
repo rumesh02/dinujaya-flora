@@ -17,6 +17,8 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import CreateFlowerBox from './pages/CreateFlowerBox';
 import CheckoutCustomBox from './pages/CheckoutCustomBox';
+import Checkout from './pages/Checkout';
+import PaymentSuccess from './pages/PaymentSuccess';
 
 // Admin pages
 import AdminLayout from './components/admin/AdminLayout';
@@ -47,6 +49,8 @@ function App() {
               <Route path="/occasion/:occasionName" element={<OccasionPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/create-flower-box" element={<CreateFlowerBox />} />
               <Route path="/checkout-custom-box" element={
                 <ProtectedRoute>
@@ -54,39 +58,39 @@ function App() {
                 </ProtectedRoute>
               } />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminLayout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="suppliers" element={<Suppliers />} />
-            <Route path="users" element={<Users />} />
-            <Route path="products" element={<Products />} />
-            <Route path="orders" element={<Orders />} />
-          </Route>
+                  {/* Admin Routes */}
+              <Route path="/admin" element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }>
+                <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="suppliers" element={<Suppliers />} />
+                <Route path="users" element={<Users />} />
+                <Route path="products" element={<Products />} />
+                <Route path="orders" element={<Orders />} />
+              </Route>
 
-          {/* User Routes */}
-          <Route path="/user/home" element={
-            <ProtectedRoute>
-              <UserHome />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <UserProfile />
-            </ProtectedRoute>
-          } />
+              {/* User Routes */}
+              <Route path="/user/home" element={
+                <ProtectedRoute>
+                  <UserHome />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <UserProfile />
+                </ProtectedRoute>
+              } />
 
-          {/* Catch all - redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-    </CustomBoxProvider>
-  </CartProvider>
-</AuthProvider>
+              {/* Catch all - redirect to home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Router>
+        </CustomBoxProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
