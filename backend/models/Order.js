@@ -11,6 +11,12 @@ const orderSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  orderType: {
+    type: String,
+    enum: ['normal', 'custom_box'],
+    default: 'normal',
+    required: true
+  },
   items: [{
     product: {
       type: mongoose.Schema.Types.ObjectId,
@@ -26,6 +32,23 @@ const orderSchema = new mongoose.Schema({
     price: {
       type: Number,
       required: true
+    }
+  }],
+  boxItems: [{
+    flower: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
+      required: function() { return this.orderType === 'custom_box'; }
+    },
+    name: String,
+    quantity: {
+      type: Number,
+      required: function() { return this.orderType === 'custom_box'; },
+      min: 1
+    },
+    price: {
+      type: Number,
+      required: function() { return this.orderType === 'custom_box'; }
     }
   }],
   totalAmount: {

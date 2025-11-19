@@ -1,38 +1,51 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Occasions = () => {
+  const navigate = useNavigate();
+
   const occasions = [
     {
-      name: "Weddings",
+      name: "Wedding",
+      displayName: "Weddings",
       image: "/images/occasion-wedding.jpg",
       description: "Make your special day unforgettable"
     },
     {
-      name: "Birthdays",
+      name: "Birthday",
+      displayName: "Birthdays",
       image: "/images/occasion-birthday.jpg",
       description: "Celebrate with vibrant blooms"
     },
     {
-      name: "Anniversaries",
+      name: "Anniversary",
+      displayName: "Anniversaries",
       image: "/images/occasion-anniversary.jpg",
       description: "Express your eternal love"
     },
     {
       name: "Sympathy",
+      displayName: "Sympathy",
       image: "/images/occasion-sympathy.jpg",
       description: "Honor and remember"
     },
     {
       name: "Congratulations",
+      displayName: "Congratulations",
       image: "/images/occasion-congrats.jpg",
       description: "Celebrate achievements"
     },
     {
-      name: "Just Because",
+      name: "Other",
+      displayName: "Just Because",
       image: "/images/occasion-justbecause.jpeg",
       description: "Brighten someone's day"
     }
   ];
+
+  const handleOccasionClick = (occasionName) => {
+    navigate(`/occasion/${occasionName}`);
+  };
 
   return (
     <section id="occasions" className="py-20 bg-white">
@@ -55,13 +68,13 @@ const Occasions = () => {
           {occasions.map((occasion, index) => (
             <div
               key={index}
-              className="relative h-80 rounded-xl overflow-hidden group cursor-pointer shadow-lg"
-            >
+              onClick={() => handleOccasionClick(occasion.name)}
+              className="relative h-80 rounded-xl overflow-hidden group cursor-pointer shadow-lg hover:shadow-2xl transition-shadow duration-300">
               {/* Background Image */}
               <div className="absolute inset-0 group-hover:scale-110 transition-transform duration-500">
                 <img 
                   src={occasion.image} 
-                  alt={occasion.name}
+                  alt={occasion.displayName}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -72,7 +85,7 @@ const Occasions = () => {
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                 <h3 className="text-2xl font-serif font-bold mb-2 transform group-hover:translate-y-0 translate-y-2 transition-transform duration-300">
-                  {occasion.name}
+                  {occasion.displayName}
                 </h3>
                 <p className="text-sm opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-4 transition-all duration-300">
                   {occasion.description}

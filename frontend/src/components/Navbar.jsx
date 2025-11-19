@@ -16,6 +16,7 @@ const Navbar = () => {
 
   const navItems = [
     { name: 'Collections', href: '#collections' },
+    { name: 'Create Your Box', href: '/create-flower-box' },
     { name: 'Occasions', href: '#occasions' },
     { name: 'Events', href: '#events' },
     { name: 'About Us', href: '#about' },
@@ -127,15 +128,31 @@ const Navbar = () => {
               )}
             </div>
             
-            {navItems.filter(item => item.name !== 'Collections').map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-gray-700 hover:text-rose-600 transition-colors duration-300 font-medium text-sm tracking-wide uppercase"
-              >
-                {item.name}
-              </a>
-            ))}
+            {navItems.filter(item => item.name !== 'Collections').map((item) => {
+              const isLink = item.href.startsWith('/');
+              
+              if (isLink) {
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => navigate(item.href)}
+                    className="text-gray-700 hover:text-rose-600 transition-colors duration-300 font-medium text-sm tracking-wide uppercase"
+                  >
+                    {item.name}
+                  </button>
+                );
+              }
+              
+              return (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-gray-700 hover:text-rose-600 transition-colors duration-300 font-medium text-sm tracking-wide uppercase"
+                >
+                  {item.name}
+                </a>
+              );
+            })}
           </div>
 
           {/* Right Side Icons */}

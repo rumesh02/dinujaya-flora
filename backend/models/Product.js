@@ -55,6 +55,12 @@ const productSchema = new mongoose.Schema({
     enum: ['Bouquets', 'Indoor Plants', 'Wedding Décor', 'Gift Bundles', 'Other'],
     default: 'Other'
   },
+  productType: {
+    type: String,
+    enum: ['flowers', 'bouquet'],
+    default: 'flowers',
+    required: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
