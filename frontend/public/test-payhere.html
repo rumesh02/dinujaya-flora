@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayHere Direct Test</title>
+    <script type="text/javascript" src="https://www.payhere.lk/lib/payhere.js"></script>
+</head>
+<body>
+    <h1>PayHere Payment Test</h1>
+    <button type="button" id="payhere-payment">Test PayHere Payment</button>
+    
+    <div id="logs" style="margin-top: 20px; padding: 10px; background: #f0f0f0;">
+        <h3>Console Logs:</h3>
+        <pre id="log-output"></pre>
+    </div>
+
+    <script>
+        function log(message) {
+            console.log(message);
+            const logOutput = document.getElementById('log-output');
+            logOutput.textContent += message + '\n';
+        }
+
+        // Payment completed
+        payhere.onCompleted = function onCompleted(orderId) {
+            log("Payment completed. OrderID:" + orderId);
+        };
+
+        // Payment window closed
+        payhere.onDismissed = function onDismissed() {
+            log("Payment dismissed");
+        };
+
+        // Error occurred
+        payhere.onError = function onError(error) {
+            log("Error: " + error);
+        };
+
+        // Test payment with your credentials
+        var payment = {
+            "sandbox": true,
+            "merchant_id": "1230340",    // Your Merchant ID
+            "return_url": undefined,     // Important
+            "cancel_url": undefined,     // Important
+            "notify_url": "http://localhost:5000/api/payment/notify",
+            "order_id": "TEST" + Date.now(),
+            "items": "Test Item",
+            "amount": "100.00",
+            "currency": "LKR",
+            "hash": "WILL_BE_CALCULATED", // Will be replaced
+            "first_name": "Test",
+            "last_name": "User",
+            "email": "test@example.com",
+            "phone": "0771234567",
+            "address": "Test Address",
+            "city": "Colombo",
+            "country": "Sri Lanka"
+        };
+
+        // Calculate hash on button click
+        document.getElementById('payhere-payment').onclick = async function (e) {
+            try {
+                log('Generating hash...');
+                
+                // Get hash from your backend
+                const response = await fetch('http://localhost:5000/api/payment/generate-hash', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify({
+                        orderId: payment.order_id,
+                        amount: payment.amount,
+                        currency: payment.currency
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    payment.hash = data.hash;
+                    payment.merchant_id = data.merchantId;
+                    
+                    log('Hash: ' + payment.hash);
+                    log('Merchant ID: ' + payment.merchant_id);
+                    log('Order ID: ' + payment.order_id);
+                    log('Amount: ' + payment.amount);
+                    log('Starting payment...');
+                    
+                    // Start payment
+                    payhere.startPayment(payment);
+                } else {
+                    log('Error getting hash: ' + data.message);
+                }
+            } catch (error) {
+                log('Error: ' + error.message);
+            }
+        };
+
+        log('Test page loaded. Click the button to test payment.');
+        log('Make sure you are logged in to the system first!');
+    </script>
+</body>
+</html>
