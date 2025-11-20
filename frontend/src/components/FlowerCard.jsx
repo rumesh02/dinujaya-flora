@@ -101,7 +101,11 @@ const FlowerCard = ({ product, onAddToCart }) => {
 
         <div className="flex items-center justify-between mb-4">
           <span className="text-2xl font-bold text-rose-600">
+<<<<<<< HEAD
             LKR {product.price?.toFixed(2)}
+=======
+            Rs.{product.price?.toFixed(2)}
+>>>>>>> 909f92bf7e3f601e826af186788115a3fd939c0d
           </span>
           <span className="text-sm text-gray-500">
             Stock: {product.stock}

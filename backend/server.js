@@ -35,6 +35,7 @@ app.use('/api/admin/flowers', require('./routes/adminFlowers'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/orders', require('./routes/customBoxOrders'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/payment', require('./routes/payment'));
 
 // Welcome route
 app.get('/', (req, res) => {
@@ -47,7 +48,8 @@ app.get('/', (req, res) => {
       users: '/api/users',
       products: '/api/products',
       orders: '/api/orders',
-      dashboard: '/api/dashboard'
+      dashboard: '/api/dashboard',
+      payment: '/api/payment'
     }
   });
 });
