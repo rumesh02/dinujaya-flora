@@ -164,6 +164,32 @@ router.get('/collection/:collectionName', async (req, res) => {
   }
 });
 
+// @route   GET /api/products/occasion/:occasionName
+// @desc    Get products by occasion
+// @access  Public
+router.get('/occasion/:occasionName', async (req, res) => {
+  try {
+    const products = await Product.find({ 
+      occasion: req.params.occasionName,
+      isAvailable: true 
+    })
+      .populate('supplier', 'name')
+      .sort({ createdAt: -1 });
+    
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      products: products
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
 // @route   GET /api/products/:id
 // @desc    Get single product
 // @access  Public

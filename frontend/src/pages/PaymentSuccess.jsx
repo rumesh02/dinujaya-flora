@@ -1,26 +1,26 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { CheckCircle, Home, Package } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { CheckCircle, Home, Package } from 'lucide-react';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { orderId, amount, status } = location.state || {};
+  const { orderId, amount } = location.state || {};
 
   useEffect(() => {
-    // If no order data, redirect to home
+    // Redirect to home if no order data
     if (!orderId) {
       navigate('/');
     }
   }, [orderId, navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
-      
-      <div className="pt-32 pb-20">
+
+      <div className="pt-32 pb-20 flex-grow">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
             {/* Success Icon */}

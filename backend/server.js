@@ -31,6 +31,7 @@ app.use('/api/suppliers', require('./routes/suppliers'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/orders', require('./routes/customBoxOrders'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/payment', require('./routes/payment'));
 

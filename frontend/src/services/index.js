@@ -39,6 +39,7 @@ export const productService = {
   getByCategory: (categoryName) => api.get(`/products/category/${categoryName}`),
   getCollections: () => api.get('/products/collections/list'),
   getByCollection: (collectionName) => api.get(`/products/collection/${collectionName}`),
+  getByOccasion: (occasionName) => api.get(`/products/occasion/${occasionName}`),
   create: (formData) => api.post('/products', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),

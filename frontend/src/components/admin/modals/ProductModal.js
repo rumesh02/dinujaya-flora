@@ -13,7 +13,8 @@ const ProductModal = ({ product, onClose }) => {
     occasion: [],
     isAvailable: true,
     isBestseller: false,
-    collection: 'Other'
+    collection: 'Other',
+    productType: 'flowers'
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -33,7 +34,8 @@ const ProductModal = ({ product, onClose }) => {
         occasion: product.occasion || [],
         isAvailable: product.isAvailable !== undefined ? product.isAvailable : true,
         isBestseller: product.isBestseller || false,
-        collection: product.collection || 'Other'
+        collection: product.collection || 'Other',
+        productType: product.productType || 'flowers'
       });
       if (product.image) {
         setImagePreview(`http://localhost:5000/uploads/${product.image}`);
@@ -94,6 +96,7 @@ const ProductModal = ({ product, onClose }) => {
       submitData.append('isAvailable', formData.isAvailable);
       submitData.append('isBestseller', formData.isBestseller);
       submitData.append('collection', formData.collection);
+      submitData.append('productType', formData.productType);
       if (formData.supplier) submitData.append('supplier', formData.supplier);
       submitData.append('colors', JSON.stringify(formData.colors));
       submitData.append('occasion', JSON.stringify(formData.occasion));
@@ -176,6 +179,22 @@ const ProductModal = ({ product, onClose }) => {
                   <option value="Other">Other</option>
                 </select>
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Product Type <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="productType"
+                required
+                value={formData.productType}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              >
+                <option value="flowers">Individual Flowers (For Custom Box)</option>
+                <option value="bouquet">Pre-made Bouquet</option>
+              </select>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
