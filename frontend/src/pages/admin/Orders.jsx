@@ -320,7 +320,7 @@ const Orders = () => {
                           <p className="font-medium">{item.name}</p>
                           <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                         </div>
-                        <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                        <p className="font-semibold">LKR {(item.price * item.quantity).toFixed(2)}</p>
                       </div>
                     ))}
                   </div>

@@ -57,8 +57,8 @@ const productSchema = new mongoose.Schema({
   },
   productType: {
     type: String,
-    enum: ['flowers', 'bouquet'],
-    default: 'flowers',
+    enum: ['individual', 'bouquet'],
+    default: 'individual',
     required: true
   },
   createdAt: {

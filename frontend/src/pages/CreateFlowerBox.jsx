@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Flower2 } from 'lucide-react';
+import { Flower2, Loader, AlertCircle } from 'lucide-react';
+import axios from 'axios';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import ProductCardIndividual from '../components/ProductCardIndividual';
+import CustomBoxSidebar from '../components/CustomBoxSidebar';
 import { useCustomBox } from '../context/CustomBoxContext';
-import FlowerSelectionCard from '../components/FlowerSelectionCard';
-import BoxSummaryPanel from '../components/BoxSummaryPanel';
-import { productService } from '../services';
 
 const CreateFlowerBox = () => {
   const [flowers, setFlowers] = useState([]);
@@ -20,14 +22,18 @@ const CreateFlowerBox = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await productService.getAll();
       
-      // Filter only products with productType='flowers'
-      const individualFlowers = response.data.filter(
-        product => product.productType === 'flowers' && product.isAvailable && product.stock > 0
-      );
+      // Fetch ONLY individual flowers (not bouquets)
+      const response = await axios.get('http://localhost:5000/api/products?type=individual&isAvailable=true');
       
-      setFlowers(individualFlowers);
+      if (response.data.success) {
+        const individualFlowers = response.data.data.filter(
+          product => product.productType === 'individual' && product.stock > 0
+        );
+        setFlowers(individualFlowers);
+      } else {
+        setError('Failed to load flowers');
+      }
     } catch (error) {
       console.error('Error fetching flowers:', error);
       setError('Failed to load flowers. Please try again.');
@@ -36,13 +42,28 @@ const CreateFlowerBox = () => {
     }
   };
 
-  const handleAddFlower = (flower, quantity) => {
-    addFlower(flower, quantity);
+  const handleAddFlower = (flower) => {
+    addFlower(flower, 1);
+  };
+
+  const handleRemoveFlower = (flowerId) => {
+    const item = boxItems.find(i => i.product._id === flowerId);
+    if (item && item.quantity > 1) {
+      updateQuantity(flowerId, item.quantity - 1);
+    } else {
+      removeFlower(flowerId);
+    }
+  };
+
+  const getFlowerQuantity = (flowerId) => {
+    const item = boxItems.find(i => i.product._id === flowerId);
+    return item ? item.quantity : 0;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50">
+      <Navbar />
+      <div className="container mx-auto px-4 py-8 mt-20">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -97,10 +118,12 @@ const CreateFlowerBox = () => {
             {!loading && !error && flowers.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {flowers.map((flower) => (
-                  <FlowerSelectionCard
+                  <ProductCardIndividual
                     key={flower._id}
-                    flower={flower}
-                    onAdd={handleAddFlower}
+                    product={flower}
+                    quantity={getFlowerQuantity(flower._id)}
+                    onAdd={() => handleAddFlower(flower)}
+                    onRemove={() => handleRemoveFlower(flower._id)}
                   />
                 ))}
               </div>
@@ -109,17 +132,17 @@ const CreateFlowerBox = () => {
 
           {/* Right Column - Box Summary (1/3 width) */}
           <div className="lg:col-span-1">
-            <BoxSummaryPanel
+            <CustomBoxSidebar
               boxItems={boxItems}
-              onUpdateQuantity={updateQuantity}
               onRemove={removeFlower}
-              onClear={clearBox}
-              total={getBoxTotal()}
-              count={getBoxCount()}
+              onUpdateQuantity={updateQuantity}
+              onClearBox={clearBox}
+              getTotal={getBoxTotal}
             />
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

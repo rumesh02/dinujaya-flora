@@ -17,6 +17,7 @@ const Products = () => {
       const params = {};
       if (filter.category) params.category = filter.category;
       if (filter.isAvailable) params.isAvailable = filter.isAvailable;
+      if (filter.productType) params.productType = filter.productType;
       
       const response = await productService.getAll(params);
       setProducts(response.data.data);
@@ -71,14 +72,14 @@ const Products = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Products / Flowers</h1>
-          <p className="text-gray-600 mt-1">Manage your flower products</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Products / Flowers</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your flower products</p>
         </div>
         <button
           onClick={handleAdd}
-          className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition flex items-center"
+          className="w-full sm:w-auto px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition flex items-center justify-center"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -89,7 +90,19 @@ const Products = () => {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Product Type</label>
+            <select
+              value={filter.productType || ''}
+              onChange={(e) => setFilter({ ...filter, productType: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+            >
+              <option value="">All Types</option>
+              <option value="individual">🌸 Individual Flowers</option>
+              <option value="bouquet">💐 Bouquets</option>
+            </select>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
             <select
@@ -129,29 +142,57 @@ const Products = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.length > 0 ? (
-          products.map((product) => (
-            <div key={product._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-              <div className="h-48 bg-gray-200 relative">
-                <img
-                  src={`http://localhost:5000/uploads/${product.image}`}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
-                  }}
-                />
-                <span className={`absolute top-2 right-2 px-2 py-1 text-xs rounded-full ${
-                  product.isAvailable ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                }`}>
-                  {product.isAvailable ? 'Available' : 'Unavailable'}
-                </span>
-              </div>
+          products.map((product) => {
+            // Get image URL - support Cloudinary, Base64, and local uploads
+            const getImageUrl = () => {
+              // Check for Cloudinary images array
+              if (product.images && product.images.length > 0 && product.images[0].url) {
+                return product.images[0].url;
+              }
+              // Check for Base64 image
+              if (product.image && product.image.startsWith('data:image')) {
+                return product.image;
+              }
+              // Check for Base64 without prefix
+              if (product.image && product.image.length > 200) {
+                return `data:image/jpeg;base64,${product.image}`;
+              }
+              // Check for local upload path
+              if (product.image) {
+                return `http://localhost:5000/uploads/products/${product.image}`;
+              }
+              // Fallback
+              return 'https://via.placeholder.com/400x300?text=No+Image';
+            };
+
+            return (
+              <div key={product._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div className="h-48 bg-gray-200 relative">
+                  <img
+                    src={getImageUrl()}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
+                    }}
+                  />
+                  <span className={`absolute top-2 right-2 px-2 py-1 text-xs rounded-full ${
+                    product.isAvailable ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                  }`}>
+                    {product.isAvailable ? 'Available' : 'Unavailable'}
+                  </span>
+                  <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-semibold rounded-full ${
+                    product.productType === 'individual' ? 'bg-teal-500 text-white' : 'bg-purple-500 text-white'
+                  }`}>
+                    {product.productType === 'individual' ? '🌸 Individual' : '💐 Bouquet'}
+                  </span>
+                </div>
               <div className="p-4">
                 <h3 className="text-lg font-semibold text-gray-800 mb-1">{product.name}</h3>
                 <p className="text-sm text-gray-600 mb-2">{product.category}</p>
                 <p className="text-sm text-gray-700 mb-3 line-clamp-2">{product.description}</p>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-2xl font-bold text-pink-600">${product.price.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-pink-600">LKR {product.price.toFixed(2)}</span>
                   <span className="text-sm text-gray-600">Stock: {product.stock}</span>
                 </div>
                 <div className="flex space-x-2">
@@ -170,7 +211,8 @@ const Products = () => {
                 </div>
               </div>
             </div>
-          ))
+            );
+          })
         ) : (
           <div className="col-span-full text-center py-12 text-gray-500">
             No products found. Add your first product!
