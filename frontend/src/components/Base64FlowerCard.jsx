@@ -1,20 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getImageSource } from '../utils/imageHelper';
 
 const Base64FlowerCard = ({ id, name, price, image, description, category, collection, onClick }) => {
-  // Convert Base64 string to displayable image source
+  // Use unified image helper for consistent rendering
   const getImageSrc = () => {
-    if (!image) {
-      return 'https://via.placeholder.com/300x400?text=No+Image';
-    }
-    
-    // Check if image already has data:image prefix
-    if (image.startsWith('data:image')) {
-      return image;
-    }
-    
-    // Add data:image/jpeg;base64, prefix for Base64 strings
-    return `data:image/jpeg;base64,${image}`;
+    return getImageSource(image, 'https://via.placeholder.com/300x400?text=No+Image');
   };
 
   return (
