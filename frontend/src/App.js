@@ -39,6 +39,7 @@ function App() {
         <CustomBoxProvider>
           <Router>
             <Routes>
+
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
@@ -51,19 +52,28 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
+
+              {/* Flower Box Builder */}
               <Route path="/create-flower-box" element={<CreateFlowerBox />} />
-              <Route path="/checkout-custom-box" element={
-                <ProtectedRoute>
-                  <CheckoutCustomBox />
-                </ProtectedRoute>
-              } />
+
+              <Route
+                path="/checkout-custom-box"
+                element={
+                  <ProtectedRoute>
+                    <CheckoutCustomBox />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Admin Routes */}
-              <Route path="/admin" element={
-                <ProtectedRoute adminOnly={true}>
-                  <AdminLayout />
-                </ProtectedRoute>
-              }>
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute adminOnly={true}>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="suppliers" element={<Suppliers />} />
@@ -73,18 +83,24 @@ function App() {
               </Route>
 
               {/* User Routes */}
-              <Route path="/user/home" element={
-                <ProtectedRoute>
-                  <UserHome />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <UserProfile />
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/user/home"
+                element={
+                  <ProtectedRoute>
+                    <UserHome />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <UserProfile />
+                  </ProtectedRoute>
+                }
+              />
 
-              {/* Catch all - redirect to home */}
+              {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Router>
