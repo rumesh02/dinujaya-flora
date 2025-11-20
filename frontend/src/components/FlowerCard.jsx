@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ShoppingCart, Heart } from 'lucide-react';
+import { getImageSource } from '../utils/imageHelper';
 
 const FlowerCard = ({ product, onAddToCart }) => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const FlowerCard = ({ product, onAddToCart }) => {
       {/* Product Image */}
       <div className="relative h-64 bg-gray-200 overflow-hidden group">
         <img
-          src={product.image ? `http://localhost:5000/uploads/products/${product.image}` : '/images/default-flower.jpg'}
+          src={getImageSource(product.imageBase64 || product.image)}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
           onError={(e) => {
@@ -101,7 +102,7 @@ const FlowerCard = ({ product, onAddToCart }) => {
 
         <div className="flex items-center justify-between mb-4">
           <span className="text-2xl font-bold text-rose-600">
-            Rs.{product.price?.toFixed(2)}
+            LKR {product.price?.toFixed(2)}
           </span>
           <span className="text-sm text-gray-500">
             Stock: {product.stock}

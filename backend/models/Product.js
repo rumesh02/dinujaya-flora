@@ -31,6 +31,12 @@ const productSchema = new mongoose.Schema({
     type: String,
     default: 'default-flower.jpg'
   },
+  imageBase64: {
+    type: String,
+    // Stores Base64 encoded image (without data:image prefix)
+    // Can be very large, MongoDB supports up to 16MB per document
+    default: null
+  },
   supplier: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Supplier'
@@ -54,6 +60,12 @@ const productSchema = new mongoose.Schema({
     type: String,
     enum: ['Bouquets', 'Indoor Plants', 'Wedding Décor', 'Gift Bundles', 'Other'],
     default: 'Other'
+  },
+  productType: {
+    type: String,
+    enum: ['individual', 'bouquet'],
+    default: 'individual',
+    required: true
   },
   createdAt: {
     type: Date,
