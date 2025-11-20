@@ -109,113 +109,273 @@ const Checkout = () => {
   }
 
   return (
-    <AuthProvider>
-      <CartProvider>
-        <CustomBoxProvider>
-          <Router>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/flowers" element={<Flowers />} />
-              <Route path="/collections/:categoryName" element={<CollectionPage />} />
-              <Route path="/collection/:collectionName" element={<CollectionDetailPage />} />
-              <Route path="/occasion/:occasionName" element={<OccasionPage />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/payment-success" element={<PaymentSuccess />} />
-              <Route path="/create-flower-box" element={<CreateFlowerBox />} />
-              <Route
-                path="/checkout-custom-box"
-                element={
-                  <ProtectedRoute>
-                    <CheckoutCustomBox />
-                  </ProtectedRoute>
-                }
-              />
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 py-12">
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+            Checkout
+          </h1>
 
-              {/* Admin Routes (nested under /admin) */}
-              <Route
-                path="/admin/*"
-                element={
-                  <ProtectedRoute adminOnly={true}>
-                    <AdminLayout />
-                  </ProtectedRoute>
-                }
-              />
-              {/* Note: AdminLayout should render nested routes via <Outlet /> */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
+              {error}
+            </div>
+          )}
 
-              {/* We'll still define the nested admin routes using a PathPrefix in AdminLayout or via separate Router in AdminLayout.
-                  Alternatively you can define them explicitly here as well: */}
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <ProtectedRoute adminOnly={true}>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/suppliers"
-                element={
-                  <ProtectedRoute adminOnly={true}>
-                    <Suppliers />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/users"
-                element={
-                  <ProtectedRoute adminOnly={true}>
-                    <Users />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/products"
-                element={
-                  <ProtectedRoute adminOnly={true}>
-                    <Products />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/orders"
-                element={
-                  <ProtectedRoute adminOnly={true}>
-                    <Orders />
-                  </ProtectedRoute>
-                }
-              />
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Checkout Form */}
+            <div className="lg:col-span-2">
+              <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                {/* Delivery Information */}
+                <div className="mb-8">
+                  <h2 className="text-2xl font-semibold mb-4 flex items-center text-gray-800">
+                    <MapPin className="w-6 h-6 mr-2 text-rose-500" />
+                    Delivery Information
+                  </h2>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <User className="w-4 h-4 inline mr-1" />
+                        Recipient Name *
+                      </label>
+                      <input
+                        type="text"
+                        name="recipientName"
+                        value={formData.recipientName}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        placeholder="John Doe"
+                      />
+                    </div>
 
-              {/* User Routes */}
-              <Route
-                path="/user/home"
-                element={
-                  <ProtectedRoute>
-                    <UserHome />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <UserProfile />
-                  </ProtectedRoute>
-                }
-              />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Phone className="w-4 h-4 inline mr-1" />
+                        Phone Number *
+                      </label>
+                      <input
+                        type="tel"
+                        name="recipientPhone"
+                        value={formData.recipientPhone}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        placeholder="+94 77 123 4567"
+                      />
+                    </div>
 
-              {/* Catch all - redirect to home */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Router>
-        </CustomBoxProvider>
-      </CartProvider>
-    </AuthProvider>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Street Address *
+                      </label>
+                      <input
+                        type="text"
+                        name="street"
+                        value={formData.street}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        placeholder="123 Main Street"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        City *
+                      </label>
+                      <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        placeholder="Colombo"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        State/Province *
+                      </label>
+                      <input
+                        type="text"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        placeholder="Western Province"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        ZIP Code *
+                      </label>
+                      <input
+                        type="text"
+                        name="zipCode"
+                        value={formData.zipCode}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        placeholder="00100"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Delivery Schedule */}
+                <div className="mb-8">
+                  <h2 className="text-2xl font-semibold mb-4 flex items-center text-gray-800">
+                    <Calendar className="w-6 h-6 mr-2 text-rose-500" />
+                    Delivery Schedule
+                  </h2>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Delivery Date *
+                      </label>
+                      <input
+                        type="date"
+                        name="deliveryDate"
+                        value={formData.deliveryDate}
+                        onChange={handleChange}
+                        required
+                        min={new Date().toISOString().split('T')[0]}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Clock className="w-4 h-4 inline mr-1" />
+                        Delivery Time *
+                      </label>
+                      <select
+                        name="deliveryTime"
+                        value={formData.deliveryTime}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      >
+                        <option value="morning">Morning (9 AM - 12 PM)</option>
+                        <option value="afternoon">Afternoon (12 PM - 3 PM)</option>
+                        <option value="evening">Evening (3 PM - 6 PM)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Method */}
+                <div className="mb-8">
+                  <h2 className="text-2xl font-semibold mb-4 flex items-center text-gray-800">
+                    <CreditCard className="w-6 h-6 mr-2 text-rose-500" />
+                    Payment Method
+                  </h2>
+
+                  <div className="space-y-3">
+                    <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-pink-50 transition-colors">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="cash"
+                        checked={formData.paymentMethod === 'cash'}
+                        onChange={handleChange}
+                        className="w-4 h-4 text-rose-600 focus:ring-rose-500"
+                      />
+                      <span className="ml-3 font-medium">Cash on Delivery</span>
+                    </label>
+
+                    <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-pink-50 transition-colors">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="card"
+                        checked={formData.paymentMethod === 'card'}
+                        onChange={handleChange}
+                        className="w-4 h-4 text-rose-600 focus:ring-rose-500"
+                      />
+                      <span className="ml-3 font-medium">Credit/Debit Card</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Special Instructions */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Special Instructions (Optional)
+                  </label>
+                  <textarea
+                    name="specialInstructions"
+                    value={formData.specialInstructions}
+                    onChange={handleChange}
+                    rows="4"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    placeholder="Any special requests for your order..."
+                  ></textarea>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-pink-600 hover:to-rose-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Processing...' : 'Place Order'}
+                </button>
+              </form>
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-xl shadow-lg p-6 sticky top-4">
+                <h2 className="text-2xl font-semibold mb-4 text-gray-800">Order Summary</h2>
+                
+                <div className="space-y-4 mb-6">
+                  {cartItems.map((item) => (
+                    <div key={item._id} className="flex items-center space-x-3 pb-3 border-b border-gray-200">
+                      <img
+                        src={item.image || '/images/placeholder.jpg'}
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-800">{item.name}</h3>
+                        <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                      </div>
+                      <span className="font-semibold text-gray-800">
+                        LKR {(item.price * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-2 pt-4 border-t border-gray-200">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal:</span>
+                    <span>LKR {getCartTotal().toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Delivery Fee:</span>
+                    <span className="text-green-600">Free</span>
+                  </div>
+                  <div className="flex justify-between text-xl font-bold text-gray-800 pt-2 border-t border-gray-200">
+                    <span>Total:</span>
+                    <span className="text-rose-600">LKR {getCartTotal().toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};
 
-export default App;
+export default Checkout;
