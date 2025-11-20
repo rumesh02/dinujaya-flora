@@ -101,7 +101,7 @@ const FlowerCard = ({ product, onAddToCart }) => {
 
         <div className="flex items-center justify-between mb-4">
           <span className="text-2xl font-bold text-rose-600">
-            Rs.{product.price?.toFixed(2)}
+            LKR {product.price?.toFixed(2)}
           </span>
           <span className="text-sm text-gray-500">
             Stock: {product.stock}

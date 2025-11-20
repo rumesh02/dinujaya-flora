@@ -73,8 +73,8 @@ const Dashboard = () => {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Dashboard Overview</h1>
-        <p className="text-gray-600 mt-1">Welcome back! Here's what's happening today.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Dashboard Overview</h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-1">Welcome back! Here's what's happening today.</p>
       </div>
 
       {/* Stats Cards */}

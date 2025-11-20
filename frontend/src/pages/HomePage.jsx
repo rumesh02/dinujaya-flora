@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import HeroSlideshow from '../components/HeroSlideshow';
-import Features from '../components/Features';
-import Collections from '../components/Collections';
-import PopularBouquets from '../components/PopularBouquets';
-import Occasions from '../components/Occasions';
-import Testimonials from '../components/Testimonials';
-import Newsletter from '../components/Newsletter';
-import Footer from '../components/Footer';
-import FlowerCard from '../components/FlowerCard';
+import { useSearchParams, useLocation } from 'react-router-dom';
+import Navbar from '../components/Navbar.jsx';
+import HeroSlideshow from '../components/HeroSlideshow.jsx';
+import Features from '../components/Features.jsx';
+import Collections from '../components/Collections.jsx';
+import PopularBouquets from '../components/PopularBouquets.jsx';
+import Occasions from '../components/Occasions.jsx';
+import Newsletter from '../components/Newsletter.jsx';
+import Footer from '../components/Footer.jsx';
+import FlowerCard from '../components/FlowerCard.jsx';
 import { productService } from '../services';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/CartContext.jsx';
 
 const HomePage = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const selectedCollection = searchParams.get('collection');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { addToCart } = useCart();
+
+  // Handle scroll to contact section
+  useEffect(() => {
+    if (location.hash === '#contact') {
+      setTimeout(() => {
+        const contactSection = document.getElementById('contact');
+        if (contactSection) {
+          contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [location]);
 
   useEffect(() => {
     if (selectedCollection) {
@@ -107,7 +119,6 @@ const HomePage = () => {
       <Collections />
       <PopularBouquets />
       <Occasions />
-      <Testimonials />
       <Newsletter />
       <Footer />
     </div>
