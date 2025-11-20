@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext.jsx';
 import { orderService } from '../../services';
 
 const UserProfile = () => {
@@ -119,7 +119,7 @@ const UserProfile = () => {
                       <div key={index} className="flex justify-between text-sm mb-1">
                         <span className="text-gray-700">{item.name} x {item.quantity}</span>
                         <span className="text-gray-900 font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          LKR {(item.price * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     ))}

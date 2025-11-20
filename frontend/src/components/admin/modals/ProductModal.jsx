@@ -14,7 +14,7 @@ const ProductModal = ({ product, onClose }) => {
     isAvailable: true,
     isBestseller: false,
     collection: 'Other',
-    productType: 'flowers'
+    productType: 'individual'
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -35,10 +35,24 @@ const ProductModal = ({ product, onClose }) => {
         isAvailable: product.isAvailable !== undefined ? product.isAvailable : true,
         isBestseller: product.isBestseller || false,
         collection: product.collection || 'Other',
-        productType: product.productType || 'flowers'
+        productType: product.productType || 'individual'
       });
-      if (product.image) {
-        setImagePreview(`http://localhost:5000/uploads/${product.image}`);
+      
+      // Handle different image types: Cloudinary, Base64, or local upload
+      if (product.images && product.images.length > 0 && product.images[0].url) {
+        // Cloudinary image
+        setImagePreview(product.images[0].url);
+      } else if (product.image) {
+        // Check if it's Base64
+        if (product.image.startsWith('data:image')) {
+          setImagePreview(product.image);
+        } else if (product.image.length > 200) {
+          // Base64 without prefix
+          setImagePreview(`data:image/jpeg;base64,${product.image}`);
+        } else {
+          // Local upload path
+          setImagePreview(`http://localhost:5000/uploads/products/${product.image}`);
+        }
       }
     }
   }, [product]);
@@ -192,7 +206,7 @@ const ProductModal = ({ product, onClose }) => {
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               >
-                <option value="flowers">Individual Flowers (For Custom Box)</option>
+                <option value="individual">Individual Flower (For Custom Box)</option>
                 <option value="bouquet">Pre-made Bouquet</option>
               </select>
             </div>
@@ -200,7 +214,7 @@ const ProductModal = ({ product, onClose }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Price ($) <span className="text-red-500">*</span>
+                  Price (LKR) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"

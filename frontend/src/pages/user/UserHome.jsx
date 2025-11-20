@@ -191,7 +191,7 @@ const UserHome = () => {
                         {order.items?.length || 0} item(s)
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                        ${order.totalAmount?.toFixed(2)}
+                        LKR {order.totalAmount?.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)}`}>

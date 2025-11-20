@@ -3,24 +3,41 @@ import { Heart, ShoppingCart, User, Menu, X, LogIn, UserPlus, LogOut, ChevronDow
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import axios from 'axios';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isCollectionsOpen, setIsCollectionsOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
   const userMenuRef = useRef(null);
   const collectionsMenuRef = useRef(null);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { getCartCount } = useCart();
 
+  // Fetch categories from database
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/products/categories/list');
+      setCategories(response.data.categories || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
   const navItems = [
+    { name: 'Home', href: '/' },
     { name: 'Collections', href: '#collections' },
     { name: 'Create Your Box', href: '/create-flower-box' },
-    { name: 'Occasions', href: '#occasions' },
-    { name: 'Events', href: '#events' },
-    { name: 'About Us', href: '#about' },
-    { name: 'Contact Us', href: '#contact' }
+    { name: 'Occasions', href: '/#occasions' },
+    { name: 'Events', href: '/events' },
+    { name: 'About Us', href: '/about' },
+    { name: 'Contact Us', href: '/#contact' }
   ];
 
   // Close dropdown when clicking outside
@@ -76,52 +93,34 @@ const Navbar = () => {
               </button>
               
               {isCollectionsOpen && (
-                <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-100">
-                  <button
-                    onClick={() => {
-                      navigate('/?collection=Bouquets');
-                      setIsCollectionsOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                  >
-                    Bouquets
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate('/?collection=Indoor Plants');
-                      setIsCollectionsOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                  >
-                    Indoor Plants
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate('/?collection=Wedding Décor');
-                      setIsCollectionsOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                  >
-                    Wedding Décor
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate('/?collection=Gift Bundles');
-                      setIsCollectionsOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                  >
-                    Gift Bundles
-                  </button>
-                  <div className="border-t border-gray-100 mt-2 pt-2">
+                <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-100 max-h-96 overflow-y-auto">
+                  {categories.length > 0 ? (
+                    categories.map((category) => (
+                      <button
+                        key={category}
+                        onClick={() => {
+                          navigate(`/collections/${category}`);
+                          setIsCollectionsOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                      >
+                        {category}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-sm text-gray-500">
+                      No categories available
+                    </div>
+                  )}
+                  <div className="border-t border-gray-200 mt-2 pt-2">
                     <button
                       onClick={() => {
-                        navigate('/');
+                        navigate('/flowers');
                         setIsCollectionsOpen(false);
                       }}
                       className="w-full text-left px-4 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
                     >
-                      View All
+                      View All Products
                     </button>
                   </div>
                 </div>
@@ -129,13 +128,36 @@ const Navbar = () => {
             </div>
             
             {navItems.filter(item => item.name !== 'Collections').map((item) => {
-              const isLink = item.href.startsWith('/');
+              const isLink = item.href.startsWith('/') && !item.href.includes('#');
+              const isHashLink = item.href.includes('#');
               
               if (isLink) {
                 return (
                   <button
                     key={item.name}
                     onClick={() => navigate(item.href)}
+                    className="text-gray-700 hover:text-rose-600 transition-colors duration-300 font-medium text-sm tracking-wide uppercase"
+                  >
+                    {item.name}
+                  </button>
+                );
+              }
+
+              if (isHashLink) {
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      if (window.location.pathname !== '/') {
+                        navigate(item.href);
+                      } else {
+                        const sectionId = item.href.replace('/#', '').replace('#', '');
+                        const element = document.getElementById(sectionId);
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }
+                    }}
                     className="text-gray-700 hover:text-rose-600 transition-colors duration-300 font-medium text-sm tracking-wide uppercase"
                   >
                     {item.name}

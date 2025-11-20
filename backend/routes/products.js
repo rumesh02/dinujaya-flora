@@ -10,12 +10,20 @@ const { body, validationResult } = require('express-validator');
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const { category, minPrice, maxPrice, isAvailable } = req.query;
+    const { category, minPrice, maxPrice, isAvailable, type, productType } = req.query;
     
     let query = {};
     
     if (category) {
       query.category = category;
+    }
+    
+    // Support both 'type' and 'productType' query params
+    if (type) {
+      query.productType = type;
+    }
+    if (productType) {
+      query.productType = productType;
     }
     
     if (minPrice || maxPrice) {

@@ -30,6 +30,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/suppliers', require('./routes/suppliers'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/products', require('./routes/products'));
+app.use('/api/flowers', require('./routes/flowers'));
+app.use('/api/admin/flowers', require('./routes/adminFlowers'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/orders', require('./routes/customBoxOrders'));
 app.use('/api/dashboard', require('./routes/dashboard'));

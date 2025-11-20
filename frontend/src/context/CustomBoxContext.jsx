@@ -22,22 +22,22 @@ export const CustomBoxProvider = ({ children }) => {
 
   const addFlower = (flower, quantity = 1) => {
     setBoxItems(prevItems => {
-      const existingItem = prevItems.find(item => item._id === flower._id);
+      const existingItem = prevItems.find(item => item.product._id === flower._id);
       
       if (existingItem) {
         return prevItems.map(item =>
-          item._id === flower._id
+          item.product._id === flower._id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
       
-      return [...prevItems, { ...flower, quantity }];
+      return [...prevItems, { product: flower, quantity }];
     });
   };
 
   const removeFlower = (flowerId) => {
-    setBoxItems(prevItems => prevItems.filter(item => item._id !== flowerId));
+    setBoxItems(prevItems => prevItems.filter(item => item.product._id !== flowerId));
   };
 
   const updateQuantity = (flowerId, quantity) => {
@@ -48,7 +48,7 @@ export const CustomBoxProvider = ({ children }) => {
     
     setBoxItems(prevItems =>
       prevItems.map(item =>
-        item._id === flowerId ? { ...item, quantity } : item
+        item.product._id === flowerId ? { ...item, quantity } : item
       )
     );
   };
@@ -59,7 +59,7 @@ export const CustomBoxProvider = ({ children }) => {
   };
 
   const getBoxTotal = () => {
-    return boxItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return boxItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
   };
 
   const getBoxCount = () => {
