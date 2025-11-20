@@ -247,7 +247,12 @@ router.post('/', protect, authorize('admin'), upload.single('image'), [
 
     const productData = req.body;
     
-    // Add image filename if uploaded
+    // Handle Base64 image from request body
+    if (req.body.imageBase64) {
+      productData.imageBase64 = req.body.imageBase64;
+    }
+    
+    // Handle file upload (traditional way)
     if (req.file) {
       productData.image = req.file.filename;
     }
@@ -292,7 +297,12 @@ router.put('/:id', protect, authorize('admin'), upload.single('image'), async (r
 
     const updateData = req.body;
     
-    // Add new image filename if uploaded
+    // Handle Base64 image from request body
+    if (req.body.imageBase64) {
+      updateData.imageBase64 = req.body.imageBase64;
+    }
+    
+    // Handle file upload (traditional way)
     if (req.file) {
       updateData.image = req.file.filename;
     }
