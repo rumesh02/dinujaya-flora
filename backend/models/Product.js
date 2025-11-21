@@ -29,13 +29,10 @@ const productSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: 'default-flower.jpg'
-  },
-  imageBase64: {
-    type: String,
-    // Stores Base64 encoded image (without data:image prefix)
-    // Can be very large, MongoDB supports up to 16MB per document
-    default: null
+    required: true,
+    // Stores Base64 encoded image string (complete with data:image prefix)
+    // MongoDB supports up to 16MB per document
+    default: 'data:image/jpeg;base64,/9j/4AAQSkZJRg'
   },
   supplier: {
     type: mongoose.Schema.Types.ObjectId,

@@ -111,29 +111,30 @@ const AdminAddFlower = ({ onSuccess, onCancel }) => {
       
       reader.onloadend = async () => {
         try {
-          // Extract Base64 string (remove data:image/...;base64, prefix)
-          const base64String = reader.result.split(',')[1];
+          // reader.result contains the complete Base64 data URI
+          // Format: data:image/jpeg;base64,/9j/4AAQSkZJRg...
 
-          // Create FormData
-          const submitData = new FormData();
-          submitData.append('name', formData.name);
-          submitData.append('price', parseFloat(formData.price));
-          submitData.append('description', formData.description);
-          submitData.append('category', formData.category);
-          submitData.append('collection', formData.collection);
-          submitData.append('image', imageFile);
+          // Create JSON payload with Base64 image
+          const submitData = {
+            name: formData.name,
+            price: parseFloat(formData.price),
+            description: formData.description,
+            category: formData.category,
+            collection: formData.collection,
+            image: reader.result // Complete Base64 data URI
+          };
 
           // Get auth token
           const token = localStorage.getItem('token');
 
-          // Send to backend
+          // Send to backend as JSON
           const response = await axios.post(
             'http://localhost:5000/api/admin/flowers',
             submitData,
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'application/json'
               }
             }
           );

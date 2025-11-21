@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ShoppingCart, Heart } from 'lucide-react';
-import { getImageSource } from '../utils/imageHelper';
 
 const FlowerCard = ({ product, onAddToCart }) => {
   const navigate = useNavigate();
@@ -42,6 +41,42 @@ const FlowerCard = ({ product, onAddToCart }) => {
     // Favorite logic here
   };
 
+  // Get image URL - handle multiple formats
+  const getImageUrl = () => {
+    // Check imageBase64 field first (old products)
+    if (product.imageBase64) {
+      if (product.imageBase64.startsWith('data:image')) {
+        return product.imageBase64;
+      }
+      return `data:image/jpeg;base64,${product.imageBase64}`;
+    }
+    
+    // Check image field
+    if (product.image) {
+      // Complete Base64 data URI
+      if (product.image.startsWith('data:image')) {
+        return product.image;
+      }
+      
+      // External URL
+      if (product.image.startsWith('http://') || product.image.startsWith('https://')) {
+        return product.image;
+      }
+      
+      // Base64 without prefix
+      if (product.image.length > 200 && /^[A-Za-z0-9+/=]+$/.test(product.image)) {
+        return `data:image/jpeg;base64,${product.image}`;
+      }
+      
+      // Local file path
+      if (product.image.includes('.jpg') || product.image.includes('.png') || product.image.includes('.jpeg')) {
+        return `http://localhost:5000/uploads/products/${product.image}`;
+      }
+    }
+    
+    return '/images/default-flower.jpg';
+  };
+
   return (
     <div 
       onClick={handleCardClick}
@@ -50,7 +85,7 @@ const FlowerCard = ({ product, onAddToCart }) => {
       {/* Product Image */}
       <div className="relative h-64 bg-gray-200 overflow-hidden group">
         <img
-          src={getImageSource(product.imageBase64 || product.image)}
+          src={getImageUrl()}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
           onError={(e) => {

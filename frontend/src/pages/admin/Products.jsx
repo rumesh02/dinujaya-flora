@@ -143,25 +143,41 @@ const Products = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.length > 0 ? (
           products.map((product) => {
-            // Get image URL - support Cloudinary, Base64, and local uploads
+            // Get image URL - handle multiple image storage formats
             const getImageUrl = () => {
-              // Check for Cloudinary images array
-              if (product.images && product.images.length > 0 && product.images[0].url) {
-                return product.images[0].url;
+              // Priority 1: Check imageBase64 field (old field)
+              if (product.imageBase64) {
+                if (product.imageBase64.startsWith('data:image')) {
+                  return product.imageBase64;
+                }
+                // Base64 without prefix - add it
+                return `data:image/jpeg;base64,${product.imageBase64}`;
               }
-              // Check for Base64 image
-              if (product.image && product.image.startsWith('data:image')) {
-                return product.image;
-              }
-              // Check for Base64 without prefix
-              if (product.image && product.image.length > 200) {
-                return `data:image/jpeg;base64,${product.image}`;
-              }
-              // Check for local upload path
+              
+              // Priority 2: Check image field
               if (product.image) {
-                return `http://localhost:5000/uploads/products/${product.image}`;
+                // Complete Base64 data URI
+                if (product.image.startsWith('data:image')) {
+                  return product.image;
+                }
+                
+                // External URL (Cloudinary, Unsplash, etc.)
+                if (product.image.startsWith('http://') || product.image.startsWith('https://')) {
+                  return product.image;
+                }
+                
+                // Base64 without prefix
+                if (product.image.length > 200 && /^[A-Za-z0-9+/=]+$/.test(product.image)) {
+                  return `data:image/jpeg;base64,${product.image}`;
+                }
+                
+                // Local file path - build full URL
+                if (product.image.includes('.jpg') || product.image.includes('.png') || product.image.includes('.jpeg')) {
+                  return `http://localhost:5000/uploads/products/${product.image}`;
+                }
               }
-              // Fallback
+              
+              // Fallback for missing images
               return 'https://via.placeholder.com/400x300?text=No+Image';
             };
 
