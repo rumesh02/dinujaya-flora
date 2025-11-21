@@ -38,21 +38,10 @@ const ProductModal = ({ product, onClose }) => {
         productType: product.productType || 'individual'
       });
       
-      // Handle different image types: Cloudinary, Base64, or local upload
-      if (product.images && product.images.length > 0 && product.images[0].url) {
-        // Cloudinary image
-        setImagePreview(product.images[0].url);
-      } else if (product.image) {
-        // Check if it's Base64
-        if (product.image.startsWith('data:image')) {
-          setImagePreview(product.image);
-        } else if (product.image.length > 200) {
-          // Base64 without prefix
-          setImagePreview(`data:image/jpeg;base64,${product.image}`);
-        } else {
-          // Local upload path
-          setImagePreview(`http://localhost:5000/uploads/products/${product.image}`);
-        }
+      // Handle image - all images now stored as Base64 data URIs
+      if (product.image) {
+        // Image is stored as complete Base64 data URI in MongoDB
+        setImagePreview(product.image);
       }
     }
   }, [product]);
@@ -101,21 +90,30 @@ const ProductModal = ({ product, onClose }) => {
     setError(null);
 
     try {
-      const submitData = new FormData();
-      submitData.append('name', formData.name);
-      submitData.append('category', formData.category);
-      submitData.append('price', formData.price);
-      submitData.append('description', formData.description);
-      submitData.append('stock', formData.stock);
-      submitData.append('isAvailable', formData.isAvailable);
-      submitData.append('isBestseller', formData.isBestseller);
-      submitData.append('collection', formData.collection);
-      submitData.append('productType', formData.productType);
-      if (formData.supplier) submitData.append('supplier', formData.supplier);
-      submitData.append('colors', JSON.stringify(formData.colors));
-      submitData.append('occasion', JSON.stringify(formData.occasion));
-      if (imageFile) {
-        submitData.append('image', imageFile);
+      const submitData = {
+        name: formData.name,
+        category: formData.category,
+        price: formData.price,
+        description: formData.description,
+        stock: formData.stock,
+        isAvailable: formData.isAvailable,
+        isBestseller: formData.isBestseller,
+        collection: formData.collection,
+        productType: formData.productType,
+        colors: formData.colors,
+        occasion: formData.occasion
+      };
+      
+      if (formData.supplier) {
+        submitData.supplier = formData.supplier;
+      }
+      
+      // If new image is selected, use the Base64 preview
+      if (imageFile && imagePreview) {
+        submitData.image = imagePreview; // This is the Base64 data URI from FileReader
+      } else if (!imageFile && product?.image) {
+        // Keep existing image if no new image selected
+        submitData.image = product.image;
       }
 
       if (product) {

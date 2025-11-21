@@ -247,14 +247,21 @@ router.post('/', protect, authorize('admin'), upload.single('image'), [
 
     const productData = req.body;
     
-    // Handle Base64 image from request body
-    if (req.body.imageBase64) {
-      productData.imageBase64 = req.body.imageBase64;
-    }
-    
-    // Handle file upload (traditional way)
+    // Handle file upload - Convert to Base64
     if (req.file) {
-      productData.image = req.file.filename;
+      // Get MIME type from uploaded file
+      const mimeType = req.file.mimetype;
+      // Convert buffer to Base64 string
+      const base64String = req.file.buffer.toString('base64');
+      // Create complete data URI
+      productData.image = `data:${mimeType};base64,${base64String}`;
+    } else if (req.body.image && req.body.image.startsWith('data:image')) {
+      // Handle Base64 image from request body (already formatted)
+      productData.image = req.body.image;
+    } else if (req.body.imageBase64) {
+      // Handle Base64 without data URI prefix
+      const mimeType = req.body.mimeType || 'image/jpeg';
+      productData.image = `data:${mimeType};base64,${req.body.imageBase64}`;
     }
 
     // Parse arrays if they're sent as strings
@@ -297,14 +304,21 @@ router.put('/:id', protect, authorize('admin'), upload.single('image'), async (r
 
     const updateData = req.body;
     
-    // Handle Base64 image from request body
-    if (req.body.imageBase64) {
-      updateData.imageBase64 = req.body.imageBase64;
-    }
-    
-    // Handle file upload (traditional way)
+    // Handle file upload - Convert to Base64
     if (req.file) {
-      updateData.image = req.file.filename;
+      // Get MIME type from uploaded file
+      const mimeType = req.file.mimetype;
+      // Convert buffer to Base64 string
+      const base64String = req.file.buffer.toString('base64');
+      // Create complete data URI
+      updateData.image = `data:${mimeType};base64,${base64String}`;
+    } else if (req.body.image && req.body.image.startsWith('data:image')) {
+      // Handle Base64 image from request body (already formatted)
+      updateData.image = req.body.image;
+    } else if (req.body.imageBase64) {
+      // Handle Base64 without data URI prefix
+      const mimeType = req.body.mimeType || 'image/jpeg';
+      updateData.image = `data:${mimeType};base64,${req.body.imageBase64}`;
     }
 
     // Parse arrays if they're sent as strings
