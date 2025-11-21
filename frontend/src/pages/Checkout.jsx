@@ -7,8 +7,11 @@ import axios from 'axios';
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { cartItems, getCartTotal, clearCart } = useCart();
+  const { cart = [], getCartTotal, clearCart } = useCart();
   const { user } = useAuth();
+  
+  // Alias cart as cartItems for compatibility
+  const cartItems = cart;
 
   const [formData, setFormData] = useState({
     recipientName: '',

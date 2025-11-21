@@ -88,7 +88,32 @@ const Cart = () => {
                       {/* Product Image */}
                       <div className="flex-shrink-0">
                         <img
-                          src={item.image ? `http://localhost:5000/uploads/products/${item.image}` : '/images/default-flower.jpg'}
+                          src={(() => {
+                            // Handle Base64 images
+                            if (item.imageBase64) {
+                              if (item.imageBase64.startsWith('data:image')) {
+                                return item.imageBase64;
+                              }
+                              return `data:image/jpeg;base64,${item.imageBase64}`;
+                            }
+                            if (item.image) {
+                              // Complete Base64 data URI
+                              if (item.image.startsWith('data:image')) {
+                                return item.image;
+                              }
+                              // External URL
+                              if (item.image.startsWith('http://') || item.image.startsWith('https://')) {
+                                return item.image;
+                              }
+                              // Base64 without prefix
+                              if (item.image.length > 200) {
+                                return `data:image/jpeg;base64,${item.image}`;
+                              }
+                              // Local file path
+                              return `http://localhost:5000/uploads/products/${item.image}`;
+                            }
+                            return '/images/default-flower.jpg';
+                          })()}
                           alt={item.name}
                           className="w-32 h-32 object-cover rounded-lg"
                           onError={(e) => {
