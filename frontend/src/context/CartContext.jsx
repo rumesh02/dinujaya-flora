@@ -76,6 +76,7 @@ export const CartProvider = ({ children }) => {
 
   const value = {
     cart,
+    cartItems: cart, // Alias for backward compatibility
     addToCart,
     removeFromCart,
     updateQuantity,
