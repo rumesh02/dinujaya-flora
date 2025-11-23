@@ -21,20 +21,26 @@ router.post('/generate-hash', protect, async (req, res) => {
     const merchantId = process.env.PAYHERE_MERCHANT_ID;
     const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET;
 
-    // Format amount to 2 decimal places (must match PayHere format: number_format($amount, 2, '.', ''))
+    // Format amount to 2 decimal places - CRITICAL: must be string with 2 decimals
     const formattedAmount = parseFloat(amount).toFixed(2);
 
     // Generate hash according to PayHere documentation
     // hash = UPPERCASE(MD5(merchant_id + order_id + amount + currency + UPPERCASE(MD5(merchant_secret))))
+    // IMPORTANT: merchant_secret should be the RAW secret, not decoded
     const hashedSecret = md5(merchantSecret).toUpperCase();
-    const hash = md5(merchantId + orderId + formattedAmount + currency + hashedSecret).toUpperCase();
+    const hashInput = merchantId + orderId + formattedAmount + currency + hashedSecret;
+    const hash = md5(hashInput).toUpperCase();
 
-    console.log('Payment Hash Generation:');
+    console.log('\n========== PayHere Hash Generation ==========');
     console.log('Merchant ID:', merchantId);
     console.log('Order ID:', orderId);
     console.log('Amount:', formattedAmount);
     console.log('Currency:', currency);
-    console.log('Hash:', hash);
+    console.log('Secret (Base64):', merchantSecret);
+    console.log('MD5(Secret):', hashedSecret);
+    console.log('Hash Input:', hashInput);
+    console.log('Generated Hash:', hash);
+    console.log('============================================\n');
 
     res.json({
       success: true,

@@ -34,6 +34,76 @@ const Checkout = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const initiatePayHere = async (order) => {
+    try {
+      const token = localStorage.getItem('token');
+      const hashResponse = await axios.post(
+        'http://localhost:5000/api/payment/generate-hash',
+        {
+          orderId: order.data.orderNumber,
+          amount: order.data.totalAmount.toFixed(2),
+          currency: 'LKR'
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!hashResponse.data.success) {
+        throw new Error('Failed to generate payment hash');
+      }
+
+      const payment = {
+        sandbox: true,
+        merchant_id: hashResponse.data.merchantId,
+        return_url: undefined,
+        cancel_url: undefined,
+        notify_url: 'http://localhost:5000/api/payment/notify',
+        order_id: order.data.orderNumber,
+        items: cartItems.map(item => item.name).join(', '),
+        amount: order.data.totalAmount.toFixed(2),
+        currency: 'LKR',
+        hash: hashResponse.data.hash,
+        first_name: formData.recipientName.split(' ')[0] || 'Customer',
+        last_name: formData.recipientName.split(' ').slice(1).join(' ') || 'Name',
+        email: user?.email || 'customer@dinujayaflora.com',
+        phone: formData.recipientPhone,
+        address: formData.street,
+        city: formData.city,
+        country: 'Sri Lanka'
+      };
+
+      console.log('PayHere Payment Object:', payment);
+
+      window.payhere.onCompleted = function (orderId) {
+        console.log('Payment completed:', orderId);
+        clearCart();
+        navigate('/payment-success');
+      };
+
+      window.payhere.onDismissed = function () {
+        console.log('Payment dismissed');
+        setError('Payment was cancelled. Your order has been saved.');
+        setLoading(false);
+      };
+
+      window.payhere.onError = function (error) {
+        console.error('Payment error:', error);
+        setError('Payment error: ' + error);
+        setLoading(false);
+      };
+
+      window.payhere.startPayment(payment);
+    } catch (error) {
+      console.error('PayHere error:', error);
+      setError('Failed to initiate payment: ' + error.message);
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -80,13 +150,21 @@ const Checkout = () => {
         }
       );
 
-      clearCart();
-      navigate('/payment-success');
+      console.log('Order created:', response.data);
+
+      // If payment method is card, initiate PayHere
+      if (formData.paymentMethod === 'card') {
+        await initiatePayHere(response.data);
+      } else {
+        // Cash on delivery
+        clearCart();
+        navigate('/payment-success');
+        setLoading(false);
+      }
 
     } catch (error) {
       console.error('Checkout error:', error);
       setError(error.response?.data?.message || 'Failed to place order. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
