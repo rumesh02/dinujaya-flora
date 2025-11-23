@@ -135,7 +135,7 @@ router.post('/', protect, async (req, res) => {
       await product.save();
     }
 
-    const order = await Order.create({
+    const order = new Order({
       user: req.user.id,
       items: orderItems,
       totalAmount,
@@ -148,12 +148,18 @@ router.post('/', protect, async (req, res) => {
       specialInstructions
     });
 
+    await order.save();
+
     res.status(201).json({
       success: true,
       message: 'Order created successfully',
       data: order
     });
   } catch (error) {
+    console.error('=== Order Creation Error ===');
+    console.error('Error:', error.message);
+    console.error('Stack:', error.stack);
+    console.error('========================');
     res.status(500).json({
       success: false,
       message: 'Server error',
